@@ -20,9 +20,7 @@ The generated artifact:
 
 ## Prompt → program
 
-The real workflow: you have a prompt and an input file, and you want a
-standalone Python program that solves it - one you can re-run, audit, and
-replay deterministically without the model in the loop.
+Prompt RLM with an input. Compile the trace. Replay the program against the same input.
 
 ```bash
 export OPENROUTER_API_KEY="sk-or-v1-..."
@@ -32,10 +30,7 @@ uv run compile.py "$(ls -t traces/rlm_*.jsonl* | head -1)" compiled/quick.py
 python compiled/quick.py --context /tmp/seq.txt --verify-trace-final
 ```
 
-That's the full loop: prompt RLM once, compile the trace it logged, replay
-the compiled program against the same input with `--verify-trace-final` to
-confirm the recovered logic reproduces the recorded answer.
-`cat compiled/quick_recovered.py` to read the program the model actually wrote.
+`--verify-trace-final` confirms the compiled program reproduces the recorded answer. `cat compiled/quick_recovered.py` shows the program the model wrote.
 
 ## Usage
 
