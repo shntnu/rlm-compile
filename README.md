@@ -37,12 +37,42 @@ python compiled/output.py --context input.txt --llm-audit audit.json
 The compiler is a single stdlib-only PEP 723 script.
 No dependencies to install.
 
+## Try a Real RLM Run
+
+The smallest live example is `examples/poc_assay_hit_rank.py`. It calls
+OpenRouter through `rlms`, writes a real `RLMLogger` trace into `traces/`, and
+then that trace can be compiled by this repo.
+
+```bash
+# Install uv if needed: https://docs.astral.sh/uv/getting-started/installation/
+
+# Create an OpenRouter key at https://openrouter.ai/keys, then either:
+export OPENROUTER_API_KEY="sk-or-v1-..."
+
+# Or use a local .env file. .env is gitignored and loaded by the examples.
+cp .env.example .env
+$EDITOR .env
+
+# No-token sanity check.
+uv run examples/poc_assay_hit_rank.py --gold-only
+
+# Run RLM through OpenRouter. This writes traces/rlm_YYYY-MM-DD_HH-MM-SS_<hash>.jsonl.
+uv run examples/poc_assay_hit_rank.py
+
+# Compile and replay the newest trace.
+TRACE="$(find traces -maxdepth 1 \( -name 'rlm_*.jsonl' -o -name 'rlm_*.jsonl.gz' \) -print | sort | tail -1)"
+uv run compile.py "$TRACE" compiled/my_assay_hit_rank.py
+uv run examples/poc_assay_hit_rank.py --gold-only --context-out /tmp/assay_hit_rank_context.csv
+python compiled/my_assay_hit_rank.py --context /tmp/assay_hit_rank_context.csv --verify-trace-final
+```
+
 ## Example Dependencies
 
 The API-backed example scripts declare their dependencies in PEP 723 headers, so
 run them with `uv run`:
 
 ```bash
+uv run examples/poc_assay_hit_rank.py --gold-only
 uv run examples/poc_variant_prioritization.py --gold-only
 uv run examples/poc_activity_triage.py --gold-only
 ```
@@ -84,6 +114,7 @@ The `examples/` directory has POCs that generate traces the compiler can process
 | Example | What it does | Needs API? |
 |---|---|---|
 | `poc_needle.py` | 5K-line haystack, find `SECRET_NUMBER=<digits>` | Yes (OpenRouter) |
+| `poc_assay_hit_rank.py` | Tiny one-table assay-hit ranking that runs RLM and logs a real trace | Yes (OpenRouter) |
 | `poc_activity_triage.py` | Synthetic multi-table compound triage with traps and sub-LLM calls | Yes (OpenRouter) |
 | `poc_variant_prioritization.py` | Synthetic exome variant prioritization with semantic gene-note filtering | Yes (OpenRouter) |
 | `poc_gene_expression_hits.py` | Tiny deterministic fixture (no LLM calls, stdlib-only) | No |

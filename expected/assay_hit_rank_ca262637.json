@@ -1,0 +1,20 @@
+[
+  {
+    "compound_id": "JCP_MINI_001",
+    "activity": 0.91,
+    "toxicity": 0.08,
+    "score": 0.87
+  },
+  {
+    "compound_id": "JCP_MINI_002",
+    "activity": 0.88,
+    "toxicity": 0.12,
+    "score": 0.82
+  },
+  {
+    "compound_id": "JCP_MINI_006",
+    "activity": 0.79,
+    "toxicity": 0.03,
+    "score": 0.775
+  }
+]
