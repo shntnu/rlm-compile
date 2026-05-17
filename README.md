@@ -8,15 +8,7 @@ That trace is already a program - it just happens to be serialized as JSONL and 
 
 ## Why
 
-Every existing tool in the agent-tracing space treats traces as telemetry - something to observe, debug, and learn from.
-This compiler treats the trace as a source program and compiles it into a different, self-standing representation.
-
-The generated artifact:
-- Replays deterministically without API calls (recorded LLM responses are baked in)
-- Verifies that executed trace code reproduces the recorded final answer (`--verify-trace-final`)
-- Preserves failed iterations as expected audited failures (the recovery path is part of the program)
-- Treats LLM calls as explicit semantic judgment boundaries with prompt-equality verification
-- Emits a readable `*_recovered.py` companion that strips scaffolding to show just the recovered logic
+Agent-tracing tools treat traces as telemetry. This compiler treats them as source. The compiled program runs deterministically with no API calls.
 
 ## Prompt → program
 
