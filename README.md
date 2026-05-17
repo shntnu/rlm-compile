@@ -18,7 +18,7 @@ Prompt RLM with an input. Compile the trace. Replay the program against the same
 export OPENROUTER_API_KEY="sk-or-v1-..."
 echo "ATGCGCGCATAT" > /tmp/seq.txt
 uv run --with rlms python -c 'import os; from rlm import RLM; from rlm.logger import RLMLogger; print(RLM(backend="openrouter", backend_kwargs={"api_key": os.environ["OPENROUTER_API_KEY"], "model_name": "anthropic/claude-sonnet-4.5"}, logger=RLMLogger(log_dir="./traces")).completion(prompt=open("/tmp/seq.txt").read(), root_prompt="The variable `context` holds a DNA sequence. Compute its GC content as (G+C)/length on the uppercased sequence with whitespace stripped, rounded to 4 decimals. Return only the number.").response)'
-uv run compile.py "$(ls -t traces/rlm_*.jsonl | head -1)" compiled/quick.py
+uv run compile.py "$(ls -1r traces/rlm_*.jsonl | head -1)" compiled/quick.py
 python compiled/quick.py --context /tmp/seq.txt --verify-trace-final
 ```
 
