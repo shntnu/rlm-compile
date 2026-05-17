@@ -23,6 +23,7 @@ The generated artifact:
 ```bash
 # Compile a trace
 uv run compile.py traces/some_trace.jsonl.gz compiled/output.py
+# This also writes compiled/output_recovered.py by default.
 
 # Run the compiled artifact in replay mode (no API calls)
 python compiled/output.py --context input.txt --verify-trace-final
@@ -32,10 +33,18 @@ python compiled/output.py --context new_input.txt --llm-mode live --model openai
 
 # Audit which LLM judgment calls were made
 python compiled/output.py --context input.txt --llm-audit audit.json
+
+# Run the readable recovered program directly
+python compiled/output_recovered.py --context new_input.txt --model openai/gpt-5-mini
 ```
 
 The compiler is a single stdlib-only PEP 723 script.
 No dependencies to install.
+
+The main compiled artifact is the strict replay/verifier. The sibling
+`*_recovered.py` file is a runnable, flatter view of the recovered logic for
+inspection and live reruns; traces that call `FINAL(...)`, `FINAL_VAR(...)`, or
+assign `final_answer`/`final_json` are supported.
 
 ## Try a Real RLM Run
 

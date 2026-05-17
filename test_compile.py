@@ -354,6 +354,65 @@ class CompileTraceTest(unittest.TestCase):
             result = recovered.run("hello")
             self.assertEqual(result, "HELLO")
 
+    def test_recovered_file_final_var_resolves_exec_namespace(self) -> None:
+        with tempfile.TemporaryDirectory() as raw_tmpdir:
+            tmpdir = Path(raw_tmpdir)
+            trace_path = self._write_trace(
+                tmpdir,
+                {
+                    "type": "iteration",
+                    "iteration": 1,
+                    "code_blocks": [
+                        {
+                            "code": 'result = context.upper()\nFINAL_VAR("result")',
+                            "result": {"stdout": "", "stderr": "", "rlm_calls": []},
+                        }
+                    ],
+                    "final_answer": "HELLO",
+                },
+            )
+            out_path = tmpdir / "artifact.py"
+            compile_mod.compile_trace(log_path=trace_path, out_path=out_path)
+            recovered_path = tmpdir / "artifact_recovered.py"
+            recovered = _load_module(recovered_path, "recovered_final_var_test")
+
+            result = recovered.run("hello")
+
+            self.assertEqual(result, "HELLO")
+
+    def test_recovered_file_allows_both_triple_quote_delimiters(self) -> None:
+        with tempfile.TemporaryDirectory() as raw_tmpdir:
+            tmpdir = Path(raw_tmpdir)
+            code = "\n".join(
+                [
+                    'single = ' + "'''single triple quoted text'''",
+                    'double = ' + '"""double triple quoted text"""',
+                    'print("ok")',
+                ]
+            )
+            trace_path = self._write_trace(
+                tmpdir,
+                {
+                    "type": "iteration",
+                    "iteration": 1,
+                    "code_blocks": [
+                        {
+                            "code": code,
+                            "result": {"stdout": "ok\n", "stderr": "", "rlm_calls": []},
+                        }
+                    ],
+                    "final_answer": "ok",
+                },
+            )
+            out_path = tmpdir / "artifact.py"
+            compile_mod.compile_trace(log_path=trace_path, out_path=out_path)
+            recovered_path = tmpdir / "artifact_recovered.py"
+            recovered = _load_module(recovered_path, "recovered_triple_quote_test")
+
+            result = recovered.run("")
+
+            self.assertEqual(result, "ok")
+
     def test_recovered_file_with_llm_calls(self) -> None:
         with tempfile.TemporaryDirectory() as raw_tmpdir:
             tmpdir = Path(raw_tmpdir)

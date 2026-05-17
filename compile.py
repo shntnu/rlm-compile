@@ -690,6 +690,7 @@ def _build_readable_preamble(*, log_name: str, replay_name: str, recovered_name:
         "",
         "",
         "_RUN_MODEL: str | None = None",
+        "_RUN_NAMESPACE: dict[str, Any] | None = None",
         "",
         "",
         "def llm_query(prompt: str, model: str | None = None) -> str:",
@@ -712,32 +713,38 @@ def _build_readable_preamble(*, log_name: str, replay_name: str, recovered_name:
         "",
         "",
         "def FINAL(value: Any) -> None:",
-        '    answer["content"] = value',
-        '    answer["ready"] = True',
+        "    namespace = _RUN_NAMESPACE or globals()",
+        '    namespace["answer"]["content"] = value',
+        '    namespace["answer"]["ready"] = True',
         "    raise _FinalAnswer(value)",
         "",
         "",
         "def FINAL_VAR(name: str) -> None:",
-        "    value = globals()[name] if isinstance(name, str) else name",
+        "    namespace = _RUN_NAMESPACE or globals()",
+        "    value = namespace[name] if isinstance(name, str) else name",
         "    FINAL(value)",
         "",
         "",
         "def run(context: str, *, model: str | None = None) -> str:",
-        "    global _RUN_MODEL",
+        "    global _RUN_MODEL, _RUN_NAMESPACE",
         "    _RUN_MODEL = model",
         "    import contextlib",
         "    import io",
         "    import types",
         f'    mod = types.ModuleType("{module_name}")',
         "    mod.__dict__.update(globals())",
+        '    mod.__dict__["answer"] = {"content": "", "ready": False}',
         '    mod.__dict__["context"] = context',
         '    mod.__dict__["__name__"] = "__compiled_rlm_trace__"',
+        "    _RUN_NAMESPACE = mod.__dict__",
         "    stdout_capture = io.StringIO()",
         "    try:",
         "        with contextlib.redirect_stdout(stdout_capture):",
         '            exec(compile(_RECOVERED_CODE, __file__, "exec"), mod.__dict__)',
         "    except _FinalAnswer as final:",
         "        return str(final.value)",
+        "    finally:",
+        "        _RUN_NAMESPACE = None",
         '    _ans = mod.__dict__.get("answer")',
         '    if isinstance(_ans, dict) and _ans.get("ready"):',
         '        return str(_ans["content"])',
@@ -810,11 +817,14 @@ def _readable_source(
 
     code_text = "\n".join(code_lines).rstrip() + "\n"
 
-    # Choose raw-string delimiter that doesn't conflict with code content
+    # Choose a readable raw triple-quoted string when possible, and fall back to
+    # repr when both delimiters appear in the recovered code or comments.
     if "'''" not in code_text:
-        delim = "'''"
+        recovered_code_literal = "r'''\n" + code_text + "'''"
+    elif '"""' not in code_text:
+        recovered_code_literal = 'r"""\n' + code_text + '"""'
     else:
-        delim = '"""'
+        recovered_code_literal = repr(code_text)
 
     preamble = _build_readable_preamble(
         log_name=log_path.name,
@@ -826,9 +836,7 @@ def _readable_source(
 
     return (
         preamble
-        + f"_RECOVERED_CODE = r{delim}\n"
-        + code_text
-        + f"{delim}\n"
+        + f"_RECOVERED_CODE = {recovered_code_literal}\n"
         + epilogue
     )
 
