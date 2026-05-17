@@ -37,6 +37,26 @@ python compiled/output.py --context input.txt --llm-audit audit.json
 The compiler is a single stdlib-only PEP 723 script.
 No dependencies to install.
 
+## Example Dependencies
+
+The API-backed example scripts declare their dependencies in PEP 723 headers, so
+run them with `uv run`:
+
+```bash
+uv run examples/poc_variant_prioritization.py --gold-only
+uv run examples/poc_activity_triage.py --gold-only
+```
+
+Direct `python examples/...` does not read PEP 723 metadata. If you want that
+style, create your own environment and install the same script dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install rlms python-dotenv
+python examples/poc_variant_prioritization.py --gold-only
+```
+
 ## Trace format
 
 The compiler reads JSONL (or `.jsonl.gz`) where each line is an iteration record:
