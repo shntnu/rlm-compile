@@ -28,7 +28,7 @@ uv run compile.py traces/some_trace.jsonl.gz compiled/output.py
 python compiled/output.py --context input.txt --verify-trace-final
 
 # Run in live mode with a different input
-python compiled/output.py --context new_input.txt --llm-mode live --model gpt-5-mini
+python compiled/output.py --context new_input.txt --llm-mode live --model openai/gpt-5-mini
 
 # Audit which LLM judgment calls were made
 python compiled/output.py --context input.txt --llm-audit audit.json
@@ -147,7 +147,7 @@ python compiled/out.py --context <(uv run examples/poc_gene_expression_hits.py -
 | Mode | Behavior |
 |---|---|
 | `replay` | Return recorded LLM responses; verify exact prompt match; fail if any recorded call is unused |
-| `live` | Make real OpenAI-compatible API calls (`OPENAI_API_KEY`, honors `OPENAI_BASE_URL`) |
+| `live` | Make real OpenAI-compatible API calls through OpenRouter (`OPENROUTER_API_KEY`, honors `OPENROUTER_BASE_URL` and `OPENROUTER_MODEL`) |
 | `off` | Raise if executed code attempts an LLM call |
 
 ## Related

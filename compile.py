@@ -75,7 +75,7 @@ Examples:
   python compile.py logs/rlm_2026-05-15_21-22-41_d83aed93.jsonl.gz out.py
   python compile.py logs/rlm_2026-05-15_21-22-41_d83aed93.jsonl.gz out.py --readable-out out_recovered.py
   python out.py --context haystack.txt
-  python out.py --context haystack.txt --llm-mode live --model gpt-5-mini
+  python out.py --context haystack.txt --llm-mode live --model openai/gpt-5-mini
   python out.py --context haystack.txt --quiet --no-code-output
   python out.py --context haystack.txt --verify-trace-final
   python out.py --context haystack.txt --llm-audit llm_audit.json
@@ -83,7 +83,7 @@ Examples:
 Generated artifact API:
   import out
   answer = out.run(context_string)
-  answer = out.run(context_string, llm_mode="live", model="gpt-5-mini")
+  answer = out.run(context_string, llm_mode="live", model="openai/gpt-5-mini")
 
 Generated artifact LLM modes:
   replay  Return recorded llm_query/rlm_query responses from the trace.
@@ -91,7 +91,8 @@ Generated artifact LLM modes:
           responses are stale if you provide a different context. Replay also
           checks exact prompt equality and fails if any recorded call is unused.
   live    Make ordinary OpenAI-compatible chat-completion calls.
-          Requires OPENAI_API_KEY. Honors OPENAI_BASE_URL and OPENAI_MODEL.
+          Requires OPENROUTER_API_KEY by default. Honors OPENROUTER_BASE_URL
+          and OPENROUTER_MODEL, with OpenAI-compatible environment fallbacks.
           rlm_query is downgraded to a plain LLM call.
   off     Raise if generated code attempts an LLM call.
 
@@ -109,7 +110,7 @@ compatibility shims for final-answer signaling and plain LLM calls.
 
 CLI:
     python {out_name} --context context.txt
-    python {out_name} --context context.txt --llm-mode live --model gpt-5-mini
+    python {out_name} --context context.txt --llm-mode live --model openai/gpt-5-mini
 
 Python:
     import {module_name}
@@ -143,14 +144,20 @@ class _FinalAnswer(Exception):
         super().__init__(str(value))
 
 
-def _openai_chat_completion(prompt: str, model: str | None = None) -> str:
+def _chat_completion(prompt: str, model: str | None = None) -> str:
     """Minimal OpenAI-compatible chat-completions call using only stdlib."""
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise RuntimeError("OPENAI_API_KEY is required for --llm-mode live")
+        raise RuntimeError("OPENROUTER_API_KEY is required for --llm-mode live")
 
-    base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-    model_name = model or os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+    base_url = os.environ.get(
+        "OPENROUTER_BASE_URL",
+        os.environ.get("OPENAI_BASE_URL", "https://openrouter.ai/api/v1"),
+    ).rstrip("/")
+    model_name = model or os.environ.get(
+        "OPENROUTER_MODEL",
+        os.environ.get("OPENAI_MODEL", "openai/gpt-5-mini"),
+    )
     payload = json.dumps({{
         "model": model_name,
         "messages": [{{"role": "user", "content": prompt}}],
@@ -327,7 +334,7 @@ def run(
             )
             return response
         if llm_mode == "live":
-            response = _openai_chat_completion(prompt, model=model or run_model)
+            response = _chat_completion(prompt, model=model or run_model)
             _record_llm_audit(
                 audit_log,
                 index=llm_call_count,

@@ -64,7 +64,7 @@ class CompileTraceTest(unittest.TestCase):
                 seen_models.append(model)
                 return f"model={model}"
 
-            artifact._openai_chat_completion = fake_chat_completion
+            artifact._chat_completion = fake_chat_completion
 
             result = artifact.run(
                 "",
@@ -230,7 +230,7 @@ class CompileTraceTest(unittest.TestCase):
                 emit_readable=False,
             )
             artifact = _load_module(out_path, "compiled_live_trace_final_relaxed_test")
-            artifact._openai_chat_completion = lambda prompt, model=None: "live-response"
+            artifact._chat_completion = lambda prompt, model=None: "live-response"
 
             result = artifact.run(
                 "",
