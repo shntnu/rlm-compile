@@ -6,6 +6,7 @@ import io
 import json
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 from types import ModuleType
 
@@ -37,6 +38,85 @@ class CompileTraceTest(unittest.TestCase):
         out_path = tmpdir / "artifact.py"
         compile_mod.compile_trace(log_path=trace_path, out_path=out_path, **kwargs)
         return out_path
+
+    def _compile_minimal_artifact(self, tmpdir: Path) -> ModuleType:
+        out_path = self._compile_trace(
+            tmpdir,
+            {
+                "type": "iteration",
+                "iteration": 1,
+                "code_blocks": [
+                    {
+                        "code": "print('ok')",
+                        "result": {"stdout": "ok\n", "stderr": "", "rlm_calls": []},
+                    }
+                ],
+                "final_answer": "ok",
+            },
+            emit_readable=False,
+        )
+        return _load_module(out_path, f"compiled_minimal_{id(tmpdir)}")
+
+    def test_live_openai_api_key_uses_openai_defaults(self) -> None:
+        with tempfile.TemporaryDirectory() as raw_tmpdir:
+            tmpdir = Path(raw_tmpdir)
+            artifact = self._compile_minimal_artifact(tmpdir)
+            captured: dict[str, object] = {}
+
+            class FakeResponse:
+                def __enter__(self) -> "FakeResponse":
+                    return self
+
+                def __exit__(self, *args: object) -> None:
+                    return None
+
+                def read(self) -> bytes:
+                    return b'{"choices":[{"message":{"content":"ok"}}]}'
+
+            def fake_urlopen(request: object, timeout: int) -> FakeResponse:
+                captured["url"] = request.full_url
+                captured["authorization"] = request.get_header("Authorization")
+                captured["payload"] = json.loads(request.data.decode("utf-8"))
+                captured["timeout"] = timeout
+                return FakeResponse()
+
+            with mock.patch.dict(artifact.os.environ, {"OPENAI_API_KEY": "sk-openai"}, clear=True):
+                with mock.patch.object(artifact.urllib.request, "urlopen", fake_urlopen):
+                    self.assertEqual(artifact._chat_completion("prompt"), "ok")
+
+            self.assertEqual(captured["url"], "https://api.openai.com/v1/chat/completions")
+            self.assertEqual(captured["authorization"], "Bearer sk-openai")
+            self.assertEqual(captured["payload"]["model"], "gpt-5-mini")
+
+    def test_live_openrouter_api_key_uses_openrouter_defaults(self) -> None:
+        with tempfile.TemporaryDirectory() as raw_tmpdir:
+            tmpdir = Path(raw_tmpdir)
+            artifact = self._compile_minimal_artifact(tmpdir)
+            captured: dict[str, object] = {}
+
+            class FakeResponse:
+                def __enter__(self) -> "FakeResponse":
+                    return self
+
+                def __exit__(self, *args: object) -> None:
+                    return None
+
+                def read(self) -> bytes:
+                    return b'{"choices":[{"message":{"content":"ok"}}]}'
+
+            def fake_urlopen(request: object, timeout: int) -> FakeResponse:
+                captured["url"] = request.full_url
+                captured["authorization"] = request.get_header("Authorization")
+                captured["payload"] = json.loads(request.data.decode("utf-8"))
+                return FakeResponse()
+
+            with mock.patch.dict(artifact.os.environ, {"OPENROUTER_API_KEY": "sk-or"}, clear=True):
+                with mock.patch.object(artifact.urllib.request, "urlopen", fake_urlopen):
+                    self.assertEqual(artifact._chat_completion("prompt"), "ok")
+
+            self.assertEqual(captured["url"], "https://openrouter.ai/api/v1/chat/completions")
+            self.assertEqual(captured["authorization"], "Bearer sk-or")
+            self.assertEqual(captured["payload"]["model"], "openai/gpt-5-mini")
 
     def test_live_llm_queries_inherit_run_model(self) -> None:
         with tempfile.TemporaryDirectory() as raw_tmpdir:

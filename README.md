@@ -147,7 +147,7 @@ python compiled/out.py --context <(uv run examples/poc_gene_expression_hits.py -
 | Mode | Behavior |
 |---|---|
 | `replay` | Return recorded LLM responses; verify exact prompt match; fail if any recorded call is unused |
-| `live` | Make real OpenAI-compatible API calls through OpenRouter (`OPENROUTER_API_KEY`, honors `OPENROUTER_BASE_URL` and `OPENROUTER_MODEL`) |
+| `live` | Make real OpenAI-compatible API calls through OpenRouter (`OPENROUTER_API_KEY`) or OpenAI (`OPENAI_API_KEY`), honoring the matching `*_BASE_URL` and `*_MODEL` overrides |
 | `off` | Raise if executed code attempts an LLM call |
 
 ## Related

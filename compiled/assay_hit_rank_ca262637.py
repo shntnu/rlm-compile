@@ -42,18 +42,21 @@ class _FinalAnswer(Exception):
 
 def _chat_completion(prompt: str, model: str | None = None) -> str:
     """Minimal OpenAI-compatible chat-completions call using only stdlib."""
-    api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OPENAI_API_KEY")
+    openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = openrouter_api_key or openai_api_key
     if not api_key:
-        raise RuntimeError("OPENROUTER_API_KEY is required for --llm-mode live")
+        raise RuntimeError(
+            "OPENROUTER_API_KEY or OPENAI_API_KEY is required for --llm-mode live"
+        )
 
-    base_url = os.environ.get(
-        "OPENROUTER_BASE_URL",
-        os.environ.get("OPENAI_BASE_URL", "https://openrouter.ai/api/v1"),
-    ).rstrip("/")
-    model_name = model or os.environ.get(
-        "OPENROUTER_MODEL",
-        os.environ.get("OPENAI_MODEL", "openai/gpt-5-mini"),
-    )
+    if openrouter_api_key:
+        base_url = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+        model_name = model or os.environ.get("OPENROUTER_MODEL", "openai/gpt-5-mini")
+    else:
+        base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
+        model_name = model or os.environ.get("OPENAI_MODEL", "gpt-5-mini")
+    base_url = base_url.rstrip("/")
     payload = json.dumps({
         "model": model_name,
         "messages": [{"role": "user", "content": prompt}],
