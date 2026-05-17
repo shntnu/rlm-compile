@@ -15,7 +15,8 @@ The compiler itself is a single stdlib-only PEP 723 script. **Do not add depende
 uv run test_compile.py
 
 # Compile a trace -> strict replay artifact + readable recovered companion
-uv run compile.py traces/rlm_*.jsonl.gz compiled/out.py
+TRACE="$(find traces -maxdepth 1 \( -name 'rlm_*.jsonl' -o -name 'rlm_*.jsonl.gz' \) -print | sort | tail -1)"
+uv run compile.py "$TRACE" compiled/out.py
 
 # Replay against the original-shaped context, verify recovered output
 python compiled/out.py --context contexts/<name>.txt --verify-trace-final
