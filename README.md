@@ -18,10 +18,11 @@ The generated artifact:
 - Treats LLM calls as explicit semantic judgment boundaries with prompt-equality verification
 - Emits a readable `*_recovered.py` companion that strips scaffolding to show just the recovered logic
 
-## Shortest possible path
+## Prompt → program
 
-If you just want to see the trace→program pipeline with no fixture scaffolding,
-write an input file, prompt RLM inline against it, then compile and replay:
+The real workflow: you have a prompt and an input file, and you want a
+standalone Python program that solves it - one you can re-run, audit, and
+replay deterministically without the model in the loop.
 
 ```bash
 export OPENROUTER_API_KEY="sk-or-v1-..."
@@ -31,13 +32,10 @@ uv run compile.py "$(ls -t traces/rlm_*.jsonl* | head -1)" compiled/quick.py
 python compiled/quick.py --context /tmp/seq.txt --verify-trace-final
 ```
 
-The compiled artifact reads `--context` and recomputes the answer; the strict
-replay verifies it matches the trace's recorded final. `cat compiled/quick_recovered.py`
-to see the program the model actually wrote.
-
-The POC scripts in `examples/` look long because they bundle a synthetic
-fixture, a deterministic gold answer, and a `--gold-only` token-free mode for
-validation. The compiler itself only needs the trace.
+That's the full loop: prompt RLM once, compile the trace it logged, replay
+the compiled program against the same input with `--verify-trace-final` to
+confirm the recovered logic reproduces the recorded answer.
+`cat compiled/quick_recovered.py` to read the program the model actually wrote.
 
 ## Usage
 
