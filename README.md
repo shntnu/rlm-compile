@@ -46,6 +46,22 @@ The main compiled artifact is the strict replay/verifier. The sibling
 inspection and live reruns; traces that call `FINAL(...)`, `FINAL_VAR(...)`, or
 assign `final_answer`/`final_json` are supported.
 
+## Shortest possible path
+
+If you just want to see the trace→program pipeline with no fixture scaffolding,
+prompt RLM inline and compile the trace it drops in `traces/`:
+
+```bash
+export OPENROUTER_API_KEY="sk-or-v1-..."
+uv run --with rlms python -c 'import os; from rlm import RLM; from rlm.logger import RLMLogger; print(RLM(backend="openrouter", backend_kwargs={"api_key": os.environ["OPENROUTER_API_KEY"], "model_name": "anthropic/claude-sonnet-4.5"}, logger=RLMLogger(log_dir="./traces")).completion(prompt="Compute GC content of ATGCGCGCATAT as (G+C)/length, rounded to 4 decimals. Return only the number.").response)'
+uv run compile.py "$(ls -t traces/rlm_*.jsonl* | head -1)" compiled/quick.py
+cat compiled/quick_recovered.py   # the program the model actually wrote
+```
+
+The POC scripts in `examples/` look long because they bundle a synthetic
+fixture, a deterministic gold answer, and a `--gold-only` token-free mode for
+validation. The compiler itself only needs the trace.
+
 ## Try a Real RLM Run
 
 The smallest live example is `examples/poc_assay_hit_rank.py`. It calls
