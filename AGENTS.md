@@ -94,7 +94,7 @@ The compiler only consumes `type=="iteration"` records; all other records are ig
 
 - **`compile.py` is stdlib-only.** No `pip install`. If you need a new helper, write it inline.
 - **Examples are PEP 723 scripts.** Run with `uv run examples/foo.py`, not bare `python` — the dependency block only fires under `uv run`. New examples should follow `examples/poc_assay_hit_rank.py` as the template: `rlms` + `python-dotenv`, a `--gold-only` no-token mode, an `RLMLogger` that writes to `traces/`.
-- **New fixtures.** Drop `.jsonl.gz` traces into `traces/`, gold answers into `expected/<hash>.json`, sample inputs into `contexts/`. The hash in the filename is content-derived; preserve it across compile/expected/context for any one example.
+- **New fixtures.** Drop `.jsonl.gz` traces into `traces/`, gold answers into `expected/<name>_<hash>.json`, sample inputs into `contexts/<name>.txt`. The 8-char hex suffix is content-derived and is the **join key**: a trace `rlm_<datetime>_<hash>.jsonl.gz` corresponds to `expected/<name>_<hash>.json` and `compiled/<name>_<hash>.py` with the same `<hash>`. Trace filenames keep the `rlm_<datetime>_` prefix because that's the native `RLMLogger` output format; rely on the hash, not the timestamp, to map between folders.
 - **After touching `compile.py`.** Run `uv run test_compile.py` and also recompile at least one committed trace + replay with `--verify-trace-final` to catch artifact-format regressions the unit tests don't cover.
 - **`.gitignore` covers** `.env`, `.venv`, `__pycache__`. The `compiled/` directory is committed — generated artifacts are part of the catalog, not build output.
 
