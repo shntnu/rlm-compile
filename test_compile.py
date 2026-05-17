@@ -328,5 +328,66 @@ class CompileTraceTest(unittest.TestCase):
                 )
 
 
+    def test_recovered_file_is_runnable(self) -> None:
+        with tempfile.TemporaryDirectory() as raw_tmpdir:
+            tmpdir = Path(raw_tmpdir)
+            trace_path = self._write_trace(
+                tmpdir,
+                {
+                    "type": "iteration",
+                    "iteration": 1,
+                    "code_blocks": [
+                        {
+                            "code": "result = context.upper()\nprint(result)",
+                            "result": {"stdout": "HELLO\n", "stderr": "", "rlm_calls": []},
+                        }
+                    ],
+                    "final_answer": "HELLO",
+                },
+            )
+            out_path = tmpdir / "artifact.py"
+            compile_mod.compile_trace(log_path=trace_path, out_path=out_path)
+            recovered_path = tmpdir / "artifact_recovered.py"
+            self.assertTrue(recovered_path.exists())
+            recovered = _load_module(recovered_path, "recovered_runnable_test")
+            self.assertTrue(hasattr(recovered, "run"))
+            result = recovered.run("hello")
+            self.assertEqual(result, "HELLO")
+
+    def test_recovered_file_with_llm_calls(self) -> None:
+        with tempfile.TemporaryDirectory() as raw_tmpdir:
+            tmpdir = Path(raw_tmpdir)
+            trace_path = self._write_trace(
+                tmpdir,
+                {
+                    "type": "iteration",
+                    "iteration": 1,
+                    "code_blocks": [
+                        {
+                            "code": "answer_text = llm_query('classify: ' + context)\nprint(answer_text)",
+                            "result": {
+                                "stdout": "positive\n",
+                                "stderr": "",
+                                "rlm_calls": [
+                                    {
+                                        "prompt": "classify: test input",
+                                        "response": "positive",
+                                    }
+                                ],
+                            },
+                        }
+                    ],
+                    "final_answer": "positive",
+                },
+            )
+            out_path = tmpdir / "artifact.py"
+            compile_mod.compile_trace(log_path=trace_path, out_path=out_path)
+            recovered_path = tmpdir / "artifact_recovered.py"
+            recovered = _load_module(recovered_path, "recovered_llm_test")
+            recovered._chat_completion = lambda prompt, model=None: "mocked"
+            result = recovered.run("test input")
+            self.assertEqual(result, "mocked")
+
+
 if __name__ == "__main__":
     unittest.main()

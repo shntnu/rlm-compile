@@ -1,0 +1,7 @@
+compound_id,target,activity,toxicity,pass_qc
+JCP_MINI_001,NDUFS2,0.91,0.08,true
+JCP_MINI_002,NDUFS2,0.88,0.12,true
+JCP_MINI_003,BRD4,0.94,0.05,true
+JCP_MINI_004,NDUFS2,0.93,0.31,true
+JCP_MINI_005,NDUFS2,0.83,0.04,false
+JCP_MINI_006,NDUFS2,0.79,0.03,true

@@ -1,0 +1,64 @@
+# Synthetic exome variant-prioritization packet
+
+The data are synthetic and intentionally tiny. Join key: variants.gene -> gene_notes.gene.
+
+## TABLE variants
+variant_id,gene,chrom,pos,ref,alt,zygosity,gnomad_af,cadd_phred,consequence,clinvar,qc_filter,read_depth,alt_depth
+VAR_RND_002,BRCA1,17,117818068,G,A,heterozygous,0.010304,15.7,missense_variant,uncertain_significance,PASS,74,31
+VAR_RND_022,TP53,15,222609457,C,T,homozygous,0.01465,19.2,intron_variant,benign,PASS,22,22
+VAR_RND_028,TP53,10,147039415,T,G,homozygous,0.007564,23.9,intron_variant,benign,PASS,57,12
+VAR_RND_001,TP53,1,69436709,A,G,homozygous,0.007203,20.5,missense_variant,not_reported,PASS,83,32
+VAR_RND_031,NDUFS2,17,110658151,A,A,compound_het,0.016306,24.8,missense_variant,uncertain_significance,LowQual,83,2
+VAR_RND_035,TP53,15,129198220,G,A,homozygous,0.002359,21.8,intron_variant,not_reported,PASS,28,18
+VAR_RND_024,NDUFS2,1,10252121,C,G,compound_het,0.01742,29.8,intron_variant,not_reported,PASS,16,45
+VAR_RND_037,BRCA1,10,154244466,G,C,compound_het,0.007723,26.2,intron_variant,uncertain_significance,PASS,26,39
+VAR_RND_010,TP53,10,223707640,T,T,homozygous,0.01634,19.2,synonymous_variant,not_reported,PASS,51,9
+VAR_TRAP_MITO,NDUFS2,1,161198522,A,G,homozygous,3e-05,35.5,missense_variant,uncertain_significance,PASS,61,59
+VAR_RND_011,NDUFS2,1,223526840,C,C,compound_het,0.002078,11.1,stop_gained,not_reported,PASS,54,33
+VAR_RND_033,BRCA1,15,13299991,C,T,homozygous,0.003586,15.6,intron_variant,uncertain_significance,PASS,86,18
+VAR_TRAP_DOMINANT,BRCA1,17,43071077,A,T,homozygous,1e-05,36.2,stop_gained,pathogenic,PASS,80,78
+VAR_RND_025,OPA1,15,204935650,C,C,heterozygous,0.006188,18.8,intron_variant,not_reported,PASS,24,29
+VAR_SYN_003,LIG3,17,34991221,G,A,compound_het,0.00011,29.6,splice_donor_variant,not_reported,PASS,46,20
+VAR_RND_000,NDUFS2,15,101245543,T,T,homozygous,0.003198,18.1,stop_gained,uncertain_significance,PASS,68,24
+VAR_RND_023,OPA1,17,172735109,T,T,compound_het,0.005076,30.6,stop_gained,likely_benign,LowQual,89,15
+VAR_RND_013,OPA1,10,188327575,G,A,heterozygous,0.017655,7.0,synonymous_variant,benign,LowQual,49,14
+VAR_RND_030,NDUFS2,1,89504787,A,G,heterozygous,0.015263,19.5,stop_gained,likely_benign,PASS,42,43
+VAR_RND_015,NDUFS2,1,54413556,T,C,homozygous,0.000982,27.1,missense_variant,not_reported,LowQual,55,16
+VAR_RND_034,TP53,17,235180227,G,G,compound_het,0.002123,29.6,missense_variant,benign,LowQual,45,38
+VAR_RND_020,OPA1,10,207667338,G,A,compound_het,0.000813,30.5,intron_variant,uncertain_significance,PASS,52,33
+VAR_RND_007,BRCA1,10,180125955,A,T,heterozygous,0.001438,18.4,stop_gained,uncertain_significance,PASS,34,26
+VAR_RND_006,BRCA1,17,49804645,A,C,heterozygous,0.018388,19.7,stop_gained,likely_benign,PASS,44,10
+VAR_RND_017,TP53,10,176708493,A,C,compound_het,0.015136,24.0,intron_variant,benign,PASS,87,4
+VAR_RND_012,OPA1,15,29304226,G,T,heterozygous,0.014355,21.5,missense_variant,uncertain_significance,PASS,65,13
+VAR_RND_029,BRCA1,10,170134443,C,C,heterozygous,0.015569,27.3,synonymous_variant,likely_benign,PASS,11,41
+VAR_RND_027,TP53,10,227811354,C,T,compound_het,0.018072,8.6,intron_variant,benign,PASS,13,40
+VAR_RND_014,BRCA1,10,120114613,T,C,compound_het,0.003986,28.3,missense_variant,benign,PASS,30,43
+VAR_RND_008,BRCA1,17,40681522,A,G,compound_het,0.012076,28.6,intron_variant,uncertain_significance,PASS,46,18
+VAR_RND_016,NDUFS2,10,35754437,C,A,homozygous,0.008153,5.4,intron_variant,benign,PASS,68,7
+VAR_RND_003,TP53,17,31036350,A,C,homozygous,0.009079,16.5,stop_gained,not_reported,PASS,64,19
+VAR_TRAP_QC,POLG,15,89811203,T,C,homozygous,1e-05,39.0,splice_acceptor_variant,pathogenic,LowQual,18,17
+VAR_SYN_001,POLG,15,89876842,C,T,homozygous,2e-05,38.1,stop_gained,pathogenic,PASS,74,71
+VAR_RND_032,OPA1,15,40952906,C,G,compound_het,0.019902,26.6,intron_variant,benign,PASS,63,44
+VAR_RND_018,BRCA1,1,51761295,C,G,heterozygous,0.012178,29.6,synonymous_variant,benign,PASS,68,14
+VAR_RND_036,OPA1,17,134165195,A,G,heterozygous,0.002571,7.0,synonymous_variant,uncertain_significance,PASS,46,44
+VAR_SYN_002,TWNK,10,102748901,G,A,compound_het,8e-05,31.4,missense_variant,uncertain_significance,PASS,52,25
+VAR_RND_026,NDUFS2,15,110879731,G,C,heterozygous,0.014631,6.5,intron_variant,likely_benign,LowQual,29,10
+VAR_RND_038,OPA1,17,103577438,T,C,heterozygous,0.001,20.3,intron_variant,not_reported,LowQual,52,15
+VAR_RND_005,TP53,15,128960839,G,T,compound_het,0.000943,21.6,intron_variant,uncertain_significance,PASS,83,22
+VAR_RND_009,NDUFS2,15,16000286,T,G,compound_het,0.013716,26.4,synonymous_variant,benign,PASS,42,4
+VAR_RND_019,TP53,1,185199486,C,C,compound_het,0.018557,13.6,intron_variant,not_reported,PASS,16,38
+VAR_RND_039,NDUFS2,10,150324448,G,A,compound_het,0.002464,8.3,missense_variant,benign,LowQual,20,18
+VAR_RND_004,TP53,17,74473522,A,G,homozygous,0.002872,32.3,synonymous_variant,likely_benign,PASS,40,42
+VAR_RND_021,TP53,17,223338428,G,A,heterozygous,0.016567,32.5,stop_gained,not_reported,PASS,78,30
+## END variants
+
+## TABLE gene_notes
+gene,function_note,inheritance
+POLG,Mitochondrial DNA polymerase; essential for mtDNA replication and repair.,AR
+TWNK,Mitochondrial DNA helicase involved in mtDNA replication fork progression.,AR
+LIG3,DNA ligase III supports mitochondrial base-excision repair and mtDNA maintenance.,AR
+OPA1,Mitochondrial dynamics and optic atrophy gene; not a primary mtDNA maintenance gene.,AD
+BRCA1,Nuclear homologous recombination DNA repair and breast cancer predisposition.,AD
+TP53,Cell-cycle checkpoint and tumor suppressor biology.,AD
+NDUFS2,Complex I respiratory-chain subunit; mitochondrial but not mtDNA replication or repair.,AR
+## END gene_notes

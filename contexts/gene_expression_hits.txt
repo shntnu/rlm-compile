@@ -1,0 +1,7 @@
+gene,tissue,log2_fc,q_value
+CYP3A4,liver,2.4,0.0008
+CRP,liver,2.0,0.08
+ALB,liver,1.8,0.012
+APOB,liver,1.6,0.041
+MT-CO1,liver,1.2,0.003
+HBB,blood,5.1,0.0001
