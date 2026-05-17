@@ -209,9 +209,14 @@ def _candidate_final_values(namespace: dict[str, Any], stdout_text: str) -> list
     return candidates
 
 
-def _select_recovered_final(namespace: dict[str, Any], stdout_text: str) -> str:
+def _select_recovered_final(
+    namespace: dict[str, Any],
+    stdout_text: str,
+    *,
+    require_trace_final_match: bool,
+) -> str:
     candidates = _candidate_final_values(namespace, stdout_text)
-    if TRACE_FINAL_ANSWER is not None:
+    if require_trace_final_match and TRACE_FINAL_ANSWER is not None:
         for _, value in candidates:
             if _matches_trace_final(value):
                 return str(value)
@@ -407,7 +412,13 @@ def run(
     except _FinalAnswer as final:
         return finish(final.value)
 
-    return finish(_select_recovered_final(namespace, stdout_text))
+    return finish(
+        _select_recovered_final(
+            namespace,
+            stdout_text,
+            require_trace_final_match=(llm_mode == "replay"),
+        )
+    )
 
 
 def verify_trace_final(context: str, **run_kwargs: Any) -> str:

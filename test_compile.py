@@ -202,6 +202,51 @@ class CompileTraceTest(unittest.TestCase):
             self.assertTrue(out_path.exists())
             self.assertFalse(readable_path.exists())
 
+    def test_live_mode_does_not_require_trace_final_match(self) -> None:
+        with tempfile.TemporaryDirectory() as raw_tmpdir:
+            tmpdir = Path(raw_tmpdir)
+            out_path = self._compile_trace(
+                tmpdir,
+                {
+                    "type": "iteration",
+                    "iteration": 1,
+                    "code_blocks": [
+                        {
+                            "code": "llm_text = llm_query('new input prompt')\nprint(llm_text)",
+                            "result": {
+                                "stdout": "recorded\n",
+                                "stderr": "",
+                                "rlm_calls": [
+                                    {
+                                        "prompt": "new input prompt",
+                                        "response": "recorded",
+                                    }
+                                ],
+                            },
+                        }
+                    ],
+                    "final_answer": "recorded",
+                },
+                emit_readable=False,
+            )
+            artifact = _load_module(out_path, "compiled_live_trace_final_relaxed_test")
+            artifact._openai_chat_completion = lambda prompt, model=None: "live-response"
+
+            result = artifact.run(
+                "",
+                llm_mode="live",
+                verbose=False,
+                echo_code_output=False,
+            )
+            self.assertEqual(result, "live-response")
+            with self.assertRaises(AssertionError):
+                artifact.verify_trace_final(
+                    "",
+                    llm_mode="live",
+                    verbose=False,
+                    echo_code_output=False,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
