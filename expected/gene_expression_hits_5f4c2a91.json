@@ -1,0 +1,17 @@
+[
+  {
+    "gene": "CYP3A4",
+    "log2_fc": 2.4,
+    "q_value": 0.0008
+  },
+  {
+    "gene": "ALB",
+    "log2_fc": 1.8,
+    "q_value": 0.012
+  },
+  {
+    "gene": "APOB",
+    "log2_fc": 1.6,
+    "q_value": 0.041
+  }
+]

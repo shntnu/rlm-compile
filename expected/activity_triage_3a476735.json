@@ -1,0 +1,32 @@
+[
+  {
+    "jcp_id": "JCP2022_SYN001",
+    "compound_name": "Nadhrestat",
+    "score": 0.8964,
+    "activity_map": 0.931,
+    "similarity_to_NDUFS2_KO": 0.842,
+    "profile_consistency": 0.914,
+    "qc_plate_id": "PLATE_001",
+    "reason": "Complex I / NADH dehydrogenase inhibitor; respiration rescue follow-up passed."
+  },
+  {
+    "jcp_id": "JCP2022_SYN002",
+    "compound_name": "Oxphosarin",
+    "score": 0.8539,
+    "activity_map": 0.887,
+    "similarity_to_NDUFS2_KO": 0.801,
+    "profile_consistency": 0.872,
+    "qc_plate_id": "PLATE_002",
+    "reason": "Mitochondrial Complex I blocker; orthogonal Seahorse assay confirms NADH arm."
+  },
+  {
+    "jcp_id": "JCP2022_SYN003",
+    "compound_name": "Ndufexor",
+    "score": 0.8032,
+    "activity_map": 0.821,
+    "similarity_to_NDUFS2_KO": 0.757,
+    "profile_consistency": 0.844,
+    "qc_plate_id": "PLATE_003",
+    "reason": "Weak but specific NADH dehydrogenase signature; Complex I rescue evidence present."
+  }
+]

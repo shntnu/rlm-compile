@@ -1,0 +1,32 @@
+[
+  {
+    "variant_id": "VAR_SYN_001",
+    "gene": "POLG",
+    "score": 0.903,
+    "consequence": "stop_gained",
+    "zygosity": "homozygous",
+    "gnomad_af": 2e-05,
+    "cadd_phred": 38.1,
+    "reason": "POLG involved in mtDNA maintenance; stop_gained; rare (AF=2.00e-05); CADD=38.1"
+  },
+  {
+    "variant_id": "VAR_SYN_003",
+    "gene": "LIG3",
+    "score": 0.764,
+    "consequence": "splice_donor_variant",
+    "zygosity": "compound_het",
+    "gnomad_af": 0.00011,
+    "cadd_phred": 29.6,
+    "reason": "LIG3 involved in mtDNA maintenance; splice_donor_variant; rare (AF=1.10e-04); CADD=29.6"
+  },
+  {
+    "variant_id": "VAR_SYN_002",
+    "gene": "TWNK",
+    "score": 0.742,
+    "consequence": "missense_variant",
+    "zygosity": "compound_het",
+    "gnomad_af": 8e-05,
+    "cadd_phred": 31.4,
+    "reason": "TWNK involved in mtDNA maintenance; missense_variant; rare (AF=8.00e-05); CADD=31.4"
+  }
+]
