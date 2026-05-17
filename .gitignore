@@ -3,3 +3,9 @@ __pycache__/
 .venv/
 .env
 .claude/worktrees/
+
+# Scratch artifacts from ad-hoc runs.
+# Curated traces are committed as *.jsonl.gz; example POCs write plain *.jsonl.
+# Committed compiled artifacts are named after the example; ad-hoc ones use the live_ prefix.
+traces/*.jsonl
+compiled/live_*.py
