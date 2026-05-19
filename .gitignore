@@ -3,6 +3,7 @@ __pycache__/
 .venv/
 .env
 .claude/worktrees/
+.remember/
 
 # Scratch artifacts from ad-hoc runs.
 # Curated traces are committed as *.jsonl.gz; example POCs write plain *.jsonl.
